@@ -1,7 +1,14 @@
 from flask import Flask, url_for, request, render_template, session
 from markupsafe import escape
+import redis
+import python-dotenv
 
 app = Flask(__name__)
+
+rdx = redis.Redis(
+  host=os.environ.get("REDIS_URL"),
+  port=os.environ.get("REDIS_PORT"),
+  password= os.environ.get("REDIS_PASSWORD"))
 
 @app.route('/')
 def home():
@@ -9,7 +16,10 @@ def home():
 
 @app.route('/about')
 def about():
-    return 'About'
+    a = r.set("full_name", "john doe")
+    b = r.exists("full_name")
+    c = r.get("full_name")
+    return a+b+c
 
 @app.route('/user/<username>')
 def show_user_profile(username):
